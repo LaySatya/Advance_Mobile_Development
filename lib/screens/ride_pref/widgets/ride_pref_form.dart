@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
- 
 import '../../../model/ride/locations.dart';
 import '../../../model/ride_pref/ride_pref.dart';
- 
-///
-/// A Ride Preference From is a view to select:
-///   - A depcarture location
-///   - An arrival location
-///   - A date
-///   - A number of seats
-///
-/// The form can be created with an existing RidePref (optional).
-///
+
 class RidePrefForm extends StatefulWidget {
-  // The form can be created with an optional initial RidePref.
   final RidePref? initRidePref;
 
   const RidePrefForm({super.key, this.initRidePref});
@@ -24,42 +13,118 @@ class RidePrefForm extends StatefulWidget {
 
 class _RidePrefFormState extends State<RidePrefForm> {
   Location? departure;
-  late DateTime departureDate;
   Location? arrival;
-  late int requestedSeats;
-
-
-
-  // ----------------------------------
-  // Initialize the Form attributes
-  // ----------------------------------
+  late DateTime departureDate;
+  int requestedSeats = 1;
 
   @override
   void initState() {
     super.initState();
-    // TODO 
+    departure = widget.initRidePref?.departure;
+    arrival = widget.initRidePref?.arrival;
+    departureDate = widget.initRidePref?.departureDate ?? DateTime.now();
+    requestedSeats = widget.initRidePref?.requestedSeats ?? 1;
   }
 
-  // ----------------------------------
-  // Handle events
-  // ----------------------------------
- 
+  void _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: departureDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        departureDate = pickedDate;
+      });
+    }
+  }
 
-  // ----------------------------------
-  // Compute the widgets rendering
-  // ----------------------------------
-  
+  void _swapLocations() {
+    setState(() {
+      final temp = departure;
+      departure = arrival;
+      arrival = temp;
+    });
+  }
 
-  // ----------------------------------
-  // Build the widgets
-  // ----------------------------------
   @override
   Widget build(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [ 
- 
-        ]);
+        children: [
+          _buildLocationField('Departure', departure, Icons.location_on),
+          _buildLocationField('Arrival', arrival, Icons.location_on),
+          _buildDateField(),
+          _buildSeatsSelector(),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Search'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationField(String label, Location? location, IconData icon) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        suffixIcon: label == 'Departure'
+            ? IconButton(
+                icon: const Icon(Icons.swap_vert),
+                onPressed: _swapLocations,
+              )
+            : null,
+        border: const OutlineInputBorder(),
+      ),
+    );
+  }
+
+  Widget _buildDateField() {
+    return InkWell(
+      onTap: () => _selectDate(context),
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'Departure Date',
+          prefixIcon: Icon(Icons.calendar_today),
+          border: OutlineInputBorder(),
+        ),
+        child: Text(
+          '${departureDate.toLocal()}'.split(' ')[0],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSeatsSelector() {
+    return Row(
+      children: [
+        const Icon(Icons.person),
+        const SizedBox(width: 8),
+        DropdownButton<int>(
+          value: requestedSeats,
+          items: List.generate(5, (index) => index + 1)
+              .map((e) => DropdownMenuItem<int>(
+                    value: e,
+                    child: Text('$e'),
+                  ))
+              .toList(),
+          onChanged: (value) {
+            setState(() {
+              requestedSeats = value!;
+            });
+          },
+        ),
+      ],
+    );
   }
 }

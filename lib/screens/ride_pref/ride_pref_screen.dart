@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-
 import '../../model/ride_pref/ride_pref.dart';
 import '../../service/ride_prefs_service.dart';
 import '../../theme/theme.dart';
- 
 import 'widgets/ride_pref_form.dart';
 import 'widgets/ride_pref_history_tile.dart';
-
 const String blablaHomeImagePath = 'assets/images/blabla_home.png';
 
 ///
@@ -14,6 +11,7 @@ const String blablaHomeImagePath = 'assets/images/blabla_home.png';
 /// - Enter his/her ride preference and launch a search on it
 /// - Or select a last entered ride preferences and launch a search on it
 ///
+
 class RidePrefScreen extends StatefulWidget {
   const RidePrefScreen({super.key});
 

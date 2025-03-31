@@ -6,7 +6,7 @@ import '../model/post.dart';
 
 class HttpPostsRepository extends PostRepository{
 
-  static const String _baseUrl = 'https://jsonplaceholder.typicode.com/posts';
+  final String _baseUrl = 'https://jsonplaceholder.typicode.com/posts';
   
   @override
   Future<List<Post>> getPosts() async {
@@ -15,6 +15,7 @@ class HttpPostsRepository extends PostRepository{
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body);
+        // convert jsson object to post object
         return jsonData.map((json) => Post.fromJson(json)).toList();
       } else {
         throw Exception('Failed to fetch posts: ${response.statusCode}');
@@ -22,11 +23,5 @@ class HttpPostsRepository extends PostRepository{
     } catch (e) {
       throw Exception('Network error: $e');
     }
-  }
-  
-  @override
-  Future<List<Post>> getPost(int postId) {
-    // TODO: implement getPost
-    throw UnimplementedError();
   }
 }

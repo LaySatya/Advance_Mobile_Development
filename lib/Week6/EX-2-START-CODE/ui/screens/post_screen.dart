@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:week_3_blabla_project/Week6/EX-2-START-CODE/ui/providers/async_value.dart';
-import '../../ui/providers/post_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:week_3_blabla_project/Week6/EX-2-START-CODE/ui/providers/async_value.dart';
+
 import '../../model/post.dart';
+import '../../ui/providers/post_provider.dart';
 
 class PostsScreen extends StatelessWidget {
   const PostsScreen({super.key});
@@ -10,7 +11,7 @@ class PostsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final postsProvider = Provider.of<PostsProvider>(context);
-
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Posts'),
@@ -21,11 +22,11 @@ class PostsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(child: _buildBody(postsProvider)),
+      body: Center(child: _buildPostsBody(postsProvider)),
     );
   }
 
-  Widget _buildBody(PostsProvider postsProvider) {
+  Widget _buildPostsBody(PostsProvider postsProvider) {
     final postValue = postsProvider.postValue;
 
     if (postValue == null) {

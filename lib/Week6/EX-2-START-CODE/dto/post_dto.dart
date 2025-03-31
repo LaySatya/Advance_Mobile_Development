@@ -5,7 +5,7 @@ class PostDto {
 
   PostDto({required this.id, required this.title, required this.body});
 
-  // Convert JSON to PostDto
+  // Convert JSON to Post
   factory PostDto.fromJson(Map<String, dynamic> json) {
     assert(json['id'] is int);
     assert(json['title'] is String);

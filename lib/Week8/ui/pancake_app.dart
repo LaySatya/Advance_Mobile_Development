@@ -1,3 +1,4 @@
+// ui/pancake_app.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/pancake_provider.dart';
@@ -10,29 +11,31 @@ class PancakeApp extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(title: Text("Pancakes")),
-      body: ListView.builder(
-        itemCount: provider.pancakes.length,
-        itemBuilder: (context, index) {
-          final pancake = provider.pancakes[index];
-          return ListTile(
-            title: Text(pancake.color),
-            subtitle: Text("Price: \$${pancake.price}"),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () => _showPancakeDialog(context, provider, pancake),
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _confirmDelete(context, provider, pancake.id),
-                ),
-              ],
+      body: provider.pancakes.isEmpty
+          ? Center(child: Text("No pancakes available"))
+          : ListView.builder(
+              itemCount: provider.pancakes.length,
+              itemBuilder: (context, index) {
+                final pancake = provider.pancakes[index];
+                return ListTile(
+                  title: Text(pancake.color),
+                  subtitle: Text("Price: \$${pancake.price}"),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () => _showPancakeDialog(context, provider, pancake),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _confirmDelete(context, provider, pancake.id),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => _showPancakeDialog(context, provider, null),

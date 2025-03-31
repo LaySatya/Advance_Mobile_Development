@@ -46,30 +46,49 @@ class PancakeApp extends StatelessWidget {
   void _showPancakeDialog(BuildContext context, PancakeProvider provider, Pancake? pancake) {
     final TextEditingController colorController = TextEditingController(text: pancake?.color ?? "");
     final TextEditingController priceController = TextEditingController(text: pancake?.price.toString() ?? "");
-    
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(pancake == null ? "Add Pancake" : "Edit Pancake"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: colorController, decoration: InputDecoration(labelText: "Color")),
-            TextField(controller: priceController, decoration: InputDecoration(labelText: "Price"), keyboardType: TextInputType.number),
-          ],
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: colorController, 
+                decoration: InputDecoration(labelText: "Color"),
+                validator: (value) => value == null || value.isEmpty ? "Color cannot be empty" : null,
+              ),
+              TextFormField(
+                controller: priceController, 
+                decoration: InputDecoration(labelText: "Price"), 
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                    if (value == null || value.isEmpty) return "Price cannot be empty";
+                    if (double.tryParse(value) == null) return "Enter a valid number";
+                    if(double.tryParse(value)! <= 0) return "Price must be greater than 0";
+                    return null;
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text("Cancel")),
           TextButton(
             onPressed: () {
-              final color = colorController.text;
-              final price = double.tryParse(priceController.text) ?? 0;
-              if (pancake == null) {
-                provider.addPancake(color, price);
-              } else {
-                provider.updatePancake(pancake.id, color, price);
+              if (formKey.currentState!.validate()) {
+                final color = colorController.text;
+                final price = double.parse(priceController.text);
+                if (pancake == null) {
+                  provider.addPancake(color, price);
+                } else {
+                  provider.updatePancake(pancake.id, color, price);
+                }
+                Navigator.pop(context);
               }
-              Navigator.pop(context);
             },
             child: Text("Save"),
           ),
